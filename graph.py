@@ -8,7 +8,7 @@ def validate_input(prompt):
         except ValueError:
             print("Invalid input! Please enter numbers separated by spaces.")
 
-x_values = validate_input("Enter the wavelength of light (in nm) separated by spaces: ")
+x_values = validate_input("Enter the  of light (in nm) separated by spaces: ")
 y_values = validate_input("Enter the frequency of light (in Hz) separated by spaces: ")
 
 if len(x_values) != len(y_values):
