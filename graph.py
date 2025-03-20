@@ -1,181 +1,172 @@
-import tkinter as tk
-from tkinter import messagebox
-import matplotlib.pyplot as plt
-<<<<<<< HEAD
-=======
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
->>>>>>> 1f169d47f61d44c3cdeeef1798eafca1e98a0c6a
-import numpy as np
+# import tkinter as tk
+# from tkinter import messagebox
+# import numpy as np
+# import matplotlib.pyplot as plt
+# from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-# Initialize lists to store multiple readings
-x_readings = []
-y_readings = []
+# # Initialize lists to store readings
+# x_readings = []
+# y_readings = []
 
-<<<<<<< HEAD
-# Get user input
-x_values = validate_input("Enter the wavelength of light (in nm) separated by spaces: ")
-y_values = validate_input("Enter the frequency of light (in Hz) separated by spaces: ")
+# def format_scientific(number):
+#     """Formats numbers in scientific notation"""
+#     if number == 0:
+#         return "0"
+#     exponent = int(np.floor(np.log10(abs(number))))
+#     coefficient = number / (10 ** exponent)
+#     return f"{coefficient:.2f} × 10^{exponent}"
 
-# Ensure input lengths match
-if len(x_values) != len(y_values):
-    print("Error: The number of wavelength and frequency values should be the same.")
-else:
-    # Convert wavelength from nm to meters
-    x_meters = [x * 1e-9 for x in x_values]  # Convert nm to meters
-    c = 3.0e8  # Speed of light in m/s
+# def validate_input(values_str):
+#     """Validates and converts input string to a NumPy array"""
+#     try:
+#         values = np.array(list(map(float, values_str.split())))
+#         if np.any(values <= 0):  # Check for non-positive values
+#             messagebox.showerror("Invalid Input", "Values must be positive numbers.")
+#             return None
+#         return values
+#     except ValueError:
+#         messagebox.showerror("Invalid Input", "Please enter numbers separated by spaces.")
+#         return None
 
-    # Compute expected frequency using c = λ * f
-    expected_y_values = [c / x for x in x_meters]
+# def add_reading():
+#     """Adds wavelength and frequency readings to the list"""
+#     global x_readings, y_readings
 
-    # Calculate deviation percentage
-    deviations = [abs((y - y_exp) / y_exp) * 100 for y, y_exp in zip(y_values, expected_y_values)]
-    max_deviation = max(deviations)
+#     x_input = wavelength_entry.get()
+#     y_input = frequency_entry.get()
 
-    # Calculate slope using linear regression (least squares)
-    slope, intercept = np.polyfit(x_values, y_values, 1)
+#     if not x_input or not y_input:
+#         messagebox.showerror("Input Error", "Please enter values in both fields.")
+#         return
 
-    # Alternative: Calculate slope using first and last points
-    slope_manual = (y_values[-1] - y_values[0]) / (x_values[-1] - x_values[0])
+#     x_values = validate_input(x_input)
+#     y_values = validate_input(y_input)
 
-    # Create the plot
-    plt.figure(figsize=(8, 5))
-    plt.scatter(x_values, y_values, color='b', label='User Data', marker='o')  # User input points
-    plt.plot(x_values, expected_y_values, linestyle='--', color='gray', label='Expected c = λ * f')  # Expected relation
+#     if x_values is None or y_values is None:
+#         return
 
-    # Labels and title
-    plt.xlabel('Wavelength (nm)')
-    plt.ylabel('Frequency (Hz)')
-    plt.title('Wavelength vs Frequency Relationship')
+#     if len(x_values) != len(y_values):
+#         messagebox.showerror("Input Error", "The number of wavelength and frequency values should be the same.")
+#         return
 
-    plt.grid(True, linestyle='--', alpha=0.7)
-    plt.legend()
+#     # Convert wavelength from nm to meters
+#     x_values = (x_values * 1e-9).tolist()  # Convert to meters and make it a Python list
+#     y_values = (1 / y_values).tolist()  # Convert frequency to 1/frequency and make it a Python list
 
-    # Print slope and warning if deviation is significant
-    print(f"📏 Slope of the graph (Linear Fit): {slope:.2e} Hz/nm")
-    print(f"📏 Slope of the graph (Manual Calc): {slope_manual:.2e} Hz/nm")
+#     x_readings.extend(x_values)  # Store as flat list
+#     y_readings.extend(y_values)  # Store as flat list
 
-    if max_deviation > 5:  # Allow up to 5% deviation
-        print(f"⚠️ Warning: The values deviate from c = λ * f by up to {max_deviation:.2f}%.")
+#     # Display the input values
+#     input_values_label.config(text=f"Added Wavelengths (m): {', '.join(map(str, x_values))}\n"
+#                                    f"Added 1/Frequencies (s): {', '.join(map(str, y_values))}")
 
-    # Show the plot
-    plt.show()
-=======
-def validate_input(values_str):
-    try:
-        values = list(map(float, values_str.split()))
-        return values
-    except ValueError:
-        messagebox.showerror("Invalid input", "Please enter numbers separated by spaces.")
-        return None
+# def plot_graph():
+#     """Plots the wavelength vs 1/frequency graph with trendlines"""
+#     global canvas
 
-def add_reading():
-    global x_readings, y_readings
+#     if not x_readings or not y_readings:
+#         messagebox.showerror("No Data", "No readings to plot. Please add readings first.")
+#         return
 
-    # Get the values from the input fields
-    x_input = wavelength_entry.get()
-    y_input = frequency_entry.get()
+#     # Clear previous canvas
+#     if canvas:
+#         canvas.get_tk_widget().pack_forget()
+#         canvas.get_tk_widget().destroy()
+#         canvas = None
 
-    x_values = validate_input(x_input)
-    y_values = validate_input(y_input)
+#     # Create a figure with dark mode
+#     with plt.style.context('dark_background'):
+#         fig, ax = plt.subplots(figsize=(7, 5))
+#         ax.plot(x_readings, y_readings, 'wo', label="Experimental Data")  # White circles for data points
 
-    if x_values is None or y_values is None:
-        return
+#         # Define different polynomial degrees and colors for trendlines
+#         degrees = [1, 2, 3]
+#         colors = ['#FF6B6B', '#4ECDC4', '#45B7D1']  # Red, Teal, Blue
+#         line_styles = ['-', '--', ':']  # Solid, Dashed, Dotted
 
-    if len(x_values) != len(y_values):
-        messagebox.showerror("Input Error", "The number of wavelength and frequency values should be the same.")
-        return
+#         # Convert to numpy arrays
+#         x_arr = np.array(x_readings)
+#         y_arr = np.array(y_readings)
 
-    # Add the readings to the lists
-    x_readings.append(x_values)
-    y_readings.append(y_values)
+#         # Generate trendlines for different degrees
+#         x_fit = np.linspace(min(x_arr), max(x_arr), 100)
+        
+#         for degree, color, ls in zip(degrees, colors, line_styles):
+#             try:
+#                 # Fit polynomial
+#                 coeffs = np.polyfit(x_arr, y_arr, degree)
+#                 p = np.poly1d(coeffs)
+#                 y_fit = p(x_fit)
+                
+#                 ax.plot(x_fit, y_fit, color=color, linestyle=ls, 
+#                         label=f'Degree {degree} Fit', linewidth=2)
+#             except:
+#                 messagebox.showwarning("Fit Error", 
+#                     f"Could not calculate degree {degree} fit. Not enough data points?")
+#                 continue
 
-    # Display the input values in the label
-    input_values_label.config(text=f"Added Frequencies: {y_input}\nAdded Wavelengths: {x_input}")
+#         ax.set_xlabel('Wavelength (m)', color="white")
+#         ax.set_ylabel('1/Frequency (s)', color="white")
+#         ax.set_title('Wavelength vs 1/Frequency with Trendlines', color="white")
+#         ax.grid(True, linestyle='--', alpha=0.7, color="gray")
+#         ax.legend()
 
-def plot_graph():
-    global canvas  # Declare canvas as global to modify it
+#     # Embed figure in Tkinter window
+#     canvas = FigureCanvasTkAgg(fig, master=window)
+#     canvas.draw()
+#     canvas.get_tk_widget().pack()
 
-    if not x_readings or not y_readings:
-        messagebox.showerror("No Data", "No readings to plot. Please add readings first.")
-        return
+# def calculate_speed_of_light():
+#     """Calculates speed of light using linear regression"""
+#     if not x_readings or not y_readings:
+#         messagebox.showerror("No Data", "No readings to calculate. Please add readings first.")
+#         return
 
-    # Create a figure and plot the graph
-    fig, ax = plt.subplots(figsize=(7, 5))
+#     x_arr = np.array(x_readings)
+#     y_arr = np.array(y_readings)
 
-    for x_values, y_values in zip(x_readings, y_readings):
-        ax.plot(y_values, x_values, marker='o', linestyle='-', label=f'Reading {x_readings.index(x_values) + 1}')
+#     try:
+#         slope, intercept = np.polyfit(x_arr, y_arr, 1)
+#         if slope == 0:
+#             messagebox.showerror("Error", "Slope is zero - invalid data")
+#             return
+#         c = 1 / slope
+#         formatted_c = format_scientific(c)
+#         slope_label.config(text=f"Calculated Speed of Light: {formatted_c} m/s\n"
+#                                  f"(Using linear regression)")
+#     except:
+#         messagebox.showerror("Calculation Error", "Failed to calculate speed of light")
 
-    ax.set_xlabel('Frequency (Hz)')
-    ax.set_ylabel('Wavelength (nm)')
-    ax.set_title('Frequency vs Wavelength Graph')
-    ax.grid(True)
-    ax.legend()
+# # GUI Setup
+# window = tk.Tk()
+# window.title("Speed of Light Calculator with Trendlines")
+# window.configure(background='#121212')  # Dark mode
 
-    # Clear the previous canvas if it exists
-    if canvas:
-        canvas.get_tk_widget().pack_forget()
-        canvas.get_tk_widget().destroy()
+# # Widgets
+# wavelength_label = tk.Label(window, text="Enter wavelength (nm):", bg='#121212', fg='white')
+# wavelength_entry = tk.Entry(window, width=40, bg='#1E1E1E', fg='white')
+# frequency_label = tk.Label(window, text="Enter frequency (Hz):", bg='#121212', fg='white')
+# frequency_entry = tk.Entry(window, width=40, bg='#1E1E1E', fg='white')
 
-    # Embed the figure in Tkinter window
-    canvas = FigureCanvasTkAgg(fig, master=window)
-    canvas.draw()
-    canvas.get_tk_widget().pack()
+# add_button = tk.Button(window, text="Add Reading", command=add_reading, bg='#333333', fg='white')
+# plot_button = tk.Button(window, text="Plot Graph", command=plot_graph, bg='#006400', fg='white')
+# slope_button = tk.Button(window, text="Calculate c", command=calculate_speed_of_light, bg='#8B0000', fg='white')
 
-def calculate_slope():
-    if not x_readings or not y_readings:
-        messagebox.showerror("No Data", "No readings to calculate slope. Please add readings first.")
-        return
+# input_values_label = tk.Label(window, text="", bg='#121212', fg='white')
+# slope_label = tk.Label(window, text="", bg='#121212', fg='white')
 
-    slopes = []
-    for x_values, y_values in zip(x_readings, y_readings):
-        if len(x_values) < 2 or len(y_values) < 2:
-            messagebox.showerror("Insufficient Data", "At least two points are required to calculate the slope.")
-            return
-        slope, _ = np.polyfit(y_values, x_values, 1)
-        slopes.append(slope)
+# # Layout
+# wavelength_label.pack(pady=5)
+# wavelength_entry.pack(pady=5)
+# frequency_label.pack(pady=5)
+# frequency_entry.pack(pady=5)
+# add_button.pack(pady=10)
+# plot_button.pack(pady=5)
+# slope_button.pack(pady=10)
+# input_values_label.pack()
+# slope_label.pack()
 
-    slope_label.config(text=f"Calculated Slopes: {', '.join(map(str, slopes))}")
+# canvas = None
 
-# Create the main window
-window = tk.Tk()
-window.title("Wavelength and Frequency Plotter")
-window.configure(background='magenta')
-# Create input fields and labels
-wavelength_label = tk.Label(window, text="Enter wavelength of light (in nm) separated by spaces:", bg='magenta', fg='white')
-wavelength_label.pack()
-
-wavelength_entry = tk.Entry(window, width=40, bg='white', fg='black')
-wavelength_entry.pack()
-
-frequency_label = tk.Label(window, text="Enter frequency of light (in Hz) separated by spaces:", bg='magenta', fg='white')
-frequency_label.pack()
-
-frequency_entry = tk.Entry(window, width=40, bg='white', fg='black')
-frequency_entry.pack()
-
-# Button to add readings
-add_button = tk.Button(window, text="Add Reading", command=add_reading, bg='blue', fg='white')
-add_button.pack()
-
-# Button to plot the graph
-plot_button = tk.Button(window, text="Plot Graph", command=plot_graph, bg='green', fg='white')
-plot_button.pack()
-
-# Button to calculate the slope
-slope_button = tk.Button(window, text="Calculate Slope", command=calculate_slope, bg='red', fg='white')
-slope_button.pack()
-
-# Label to show the input values
-input_values_label = tk.Label(window, text="", justify=tk.LEFT, bg='magenta', fg='white')
-input_values_label.pack()
-
-# Label to show the calculated slope
-slope_label = tk.Label(window, text="", justify=tk.LEFT, bg='magenta', fg='white')
-slope_label.pack()
-
-# Initialize the canvas variable
-canvas = None
-
-# Start the Tkinter event loop
-window.mainloop()
->>>>>>> 1f169d47f61d44c3cdeeef1798eafca1e98a0c6a
+# # Start the Tkinter event loop
+# window.mainloop()
