@@ -112,7 +112,7 @@ class SpeedOfLightApp(App):
 
         # Create a figure and plot the graph with dark mode
         with plt.style.context('dark_background'):
-            fig, ax = plt.subplots(figsize=(7, 5))
+            fig, ax = plt.subplots(figsize=(9, 8))
             for x_values, y_values in zip(self.x_readings, self.y_readings):
                 ax.plot(x_values, y_values, marker='o', linestyle='-', label=f'Reading {self.x_readings.index(x_values) + 1}')
 
